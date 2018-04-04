@@ -1,3 +1,3 @@
 export interface IFeedbackButtonProps {
-  description: string;
+  buttonText: string;
 }

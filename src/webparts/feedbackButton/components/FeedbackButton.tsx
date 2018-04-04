@@ -6,11 +6,9 @@ import { IFeedbackButtonState } from './IFeedbackButtonState';
 import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
-import { IDigestCache, DigestCache } from '@microsoft/sp-http';
 import axios from 'axios';
 
 export default class FeedbackButton extends React.Component<IFeedbackButtonProps, IFeedbackButtonState> {
-
   constructor(props) {
     super(props);
     this.buttonClicked = this.buttonClicked.bind(this);
@@ -21,21 +19,18 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
       feedback: "",
       buttonVal: false,
       userEmail: "",
-      thing: null
+      submitStatus: false
     }
   }
 
   public render(): React.ReactElement<IFeedbackButtonProps> {
     let disabled:any = this.state.buttonVal ? 'disabled' : null;
     return (
-      <div className={ styles.feedbackButton }>
-        <div className={ styles.container }>
-          <div className={ styles.row }>
-            <div className={ styles.column }>
+          <div>
               <DefaultButton
-              disabled={disabled}
+              disabled={false}
               primary={true}
-              text='Report Issue'
+              text={this.props.buttonText}
               onClick={ this.buttonClicked }
               />
               { this.state.buttonVal ? 
@@ -43,33 +38,31 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
                  isOpen={ this.state.buttonVal }
                  type={ PanelType.smallFixedFar }
                  onDismiss={ this.onClosePanel }
-                //  onRenderFooterContent={ this._onRenderFooterContent }
-                 headerText='Report an Issue with this page'
+                 headerText='Your LoanHelp Experience'
                  closeButtonAriaLabel='Close'>
-                <TextField label="What would you like to report?" multiline rows={5} />
+                <TextField 
+                label="What would you like to report?" 
+                value={this.state.feedback} 
+                multiline rows={5} onChanged={(newVal:any) => { this.setState({feedback: newVal})}}
+                disabled={this.state.submitStatus ? true : false}
+                />
                 <div className={styles.submitButton} style={{marginTop: 10 + 'px'}}>
-                  <DefaultButton primary={true} text='Submit' onClick={this.submitReport}/>
+                  {!this.state.submitStatus ? <DefaultButton primary={true} text='Submit' onClick={this.submitReport}/> : <div><b>Thank you for your Feedback</b></div>}
                 </div>
                </Panel>
               : null}
-            </div>
           </div>
-        </div>
-      </div>
     );
   }
 
   public submitReport() {
-    
-    let formDigest = "";
+    let formDigest:any = "";
     let reportedby: string = this.state.userEmail;
     let page: string = this.state.location;
     let note: string = this.state.feedback;
-    axios.post('https://peoplesmortgagecompany.sharepoint.com/_api/contextinfo')
+    axios.post('https://peoplesmortgagecompany.sharepoint.com/sites/intranet/loanhelp/_api/contextinfo')
     .then((res) => {
-      console.log(res);
       formDigest = res.data.FormDigestValue;
-      console.log('formdigest: ' + formDigest);
     })
     .then(() => {
       axios({
@@ -91,6 +84,10 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
         }
       })
       .then((res) => {
+        this.setState({
+          submitStatus: true,
+          feedback: ""
+        })
         console.log(res);
       })
       .catch((err) => {
@@ -101,7 +98,8 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
 
   public onClosePanel() {
     this.setState({
-      buttonVal: false
+      buttonVal: false,
+      submitStatus: false
     })
   }
 

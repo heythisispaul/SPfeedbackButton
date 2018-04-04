@@ -12,7 +12,7 @@ import FeedbackButton from './components/FeedbackButton';
 import { IFeedbackButtonProps } from './components/IFeedbackButtonProps';
 
 export interface IFeedbackButtonWebPartProps {
-  description: string;
+  buttonText: string;
 }
 
 export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedbackButtonWebPartProps> {
@@ -21,7 +21,7 @@ export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedba
     const element: React.ReactElement<IFeedbackButtonProps > = React.createElement(
       FeedbackButton,
       {
-        description: this.properties.description
+        buttonText: this.properties.buttonText
       }
     );
 
@@ -43,8 +43,8 @@ export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedba
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyPaneTextField('buttonText', {
+                  label: "Button Text"
                 })
               ]
             }

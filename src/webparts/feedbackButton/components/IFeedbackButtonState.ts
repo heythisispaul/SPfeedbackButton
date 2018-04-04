@@ -3,5 +3,5 @@ export interface IFeedbackButtonState {
     feedback: string;
     buttonVal: boolean;
     userEmail: string;
-    thing: any;
+    submitStatus: boolean;
 }
