@@ -1,0 +1,12 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "feedback-client-side-solution",
+    "id": "ce2bd8ff-9b78-4d77-ab2b-bcbb392adb3e",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/feedback.sppkg"
+  }
+}
