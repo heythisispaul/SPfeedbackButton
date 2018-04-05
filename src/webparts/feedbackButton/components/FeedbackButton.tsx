@@ -6,20 +6,28 @@ import { IFeedbackButtonState } from './IFeedbackButtonState';
 import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
+import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 import axios from 'axios';
 
 export default class FeedbackButton extends React.Component<IFeedbackButtonProps, IFeedbackButtonState> {
+
   constructor(props) {
     super(props);
     this.buttonClicked = this.buttonClicked.bind(this);
     this.onClosePanel = this.onClosePanel.bind(this);
     this.submitReport = this.submitReport.bind(this);
+    this.helpfulOption = this.helpfulOption.bind(this);
+    this.trainingOption = this.trainingOption.bind(this);
     this.state = {
       location: "",
       feedback: "",
       buttonVal: false,
       userEmail: "",
-      submitStatus: false
+      submitStatus: false,
+      helpfulSelection: "",
+      moreTraining: "",
+      helpfulButton: "",
+      trainingButton: ""
     }
   }
 
@@ -40,14 +48,58 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
                  onDismiss={ this.onClosePanel }
                  headerText='Your LoanHelp Experience'
                  closeButtonAriaLabel='Close'>
-                <TextField 
-                label="What would you like to report?" 
-                value={this.state.feedback} 
-                multiline rows={5} onChanged={(newVal:any) => { this.setState({feedback: newVal})}}
-                disabled={this.state.submitStatus ? true : false}
-                />
                 <div className={styles.submitButton} style={{marginTop: 10 + 'px'}}>
-                  {!this.state.submitStatus ? <DefaultButton primary={true} text='Submit' onClick={this.submitReport}/> : <div><b>Thank you for your Feedback</b></div>}
+                  {!this.state.submitStatus ? 
+                  <div>
+                    <ChoiceGroup
+                      defaultSelectedKey='B'
+                      selectedKey={this.state.helpfulButton}
+                      options={ [
+                        {
+                          key: 'A',
+                          text: 'Yes',
+                          disabled: this.state.submitStatus ? true : false
+                        },
+                        {
+                          key: 'B',
+                          text: 'No',
+                          disabled: this.state.submitStatus ? true : false
+                        }
+                      ] }
+                      onChange={ this.helpfulOption }
+                      label='Was this page helpful?'
+                      required={ true }
+                    />
+                    <ChoiceGroup
+                      defaultSelectedKey='B'
+                      selectedKey={this.state.trainingButton}
+                      options={ [
+                        {
+                          key: 'A',
+                          text: 'Yes',
+                          disabled: this.state.submitStatus ? true : false
+                        },
+                        {
+                          key: 'B',
+                          text: 'No',
+                          disabled: this.state.submitStatus ? true : false
+                        }
+                      ] }
+                      onChange={ this.trainingOption }
+                      label='Was this page helpful?'
+                      required={ true }
+                    />
+                    <TextField 
+                      label="Comments:" 
+                      value={this.state.feedback} 
+                      multiline rows={5} onChanged={(newVal:any) => { this.setState({feedback: newVal})}}
+                      disabled={this.state.submitStatus ? true : false}
+                    />
+                    <div className={styles.submitButton} style={{marginTop: 10 + 'px'}}>
+                      <DefaultButton primary={true} text='Submit' onClick={this.submitReport} disabled={this.state.submitStatus ? true : false}/>
+                    </div>
+                  </div>
+                  : <div><b>Thank you for your Feedback</b></div>}  
                 </div>
                </Panel>
               : null}
@@ -55,11 +107,27 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
     );
   }
 
+  private helpfulOption(ev: React.FormEvent<HTMLInputElement>, option: any): void {
+    this.setState({
+      helpfulButton: option.key,
+      helpfulSelection: option.text
+    })
+  }
+
+  private trainingOption(ev: React.FormEvent<HTMLInputElement>, option: any): void {
+    this.setState({
+      trainingButton: option.key,
+      moreTraining: option.text
+    })
+  }
+
   public submitReport() {
     let formDigest:any = "";
     let reportedby: string = this.state.userEmail;
     let page: string = this.state.location;
     let note: string = this.state.feedback;
+    let training = this.state.moreTraining;
+    let helpful = this.state.helpfulSelection;
     axios.post('https://peoplesmortgagecompany.sharepoint.com/sites/intranet/loanhelp/_api/contextinfo')
     .then((res) => {
       formDigest = res.data.FormDigestValue;
@@ -80,7 +148,9 @@ export default class FeedbackButton extends React.Component<IFeedbackButtonProps
           'Title': new Date(),
           'ReportedBy': reportedby,
           'Page': page,
-          'Note': note
+          'Note': note,
+          'MoreTraining': training,
+          'PageIsHelpful': helpful
         }
       })
       .then((res) => {

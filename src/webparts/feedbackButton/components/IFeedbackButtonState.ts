@@ -4,4 +4,8 @@ export interface IFeedbackButtonState {
     buttonVal: boolean;
     userEmail: string;
     submitStatus: boolean;
+    helpfulSelection: any;
+    moreTraining: string;
+    helpfulButton: string;
+    trainingButton: string;
 }
