@@ -8,4 +8,5 @@ export interface IFeedbackButtonState {
     moreTraining: string;
     helpfulButton: string;
     trainingButton: string;
+    calendarAdd: boolean;
 }

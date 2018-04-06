@@ -20,7 +20,9 @@
     "description": { "default": "feedbackButton description" },
     "officeFabricIconFontName": "FeedbackRequestSolid",
     "properties": {
-      "buttonText": "LoanHelp Feedback"
+      "buttonText": "Recommend for the Training Calendar",
+      "buttonText2": "Provide your Feedback",
+      "calendarAfter": "You've Recommended This Page"
     }
   }]
 }

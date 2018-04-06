@@ -13,6 +13,8 @@ import { IFeedbackButtonProps } from './components/IFeedbackButtonProps';
 
 export interface IFeedbackButtonWebPartProps {
   buttonText: string;
+  buttonText2: string;
+  calendarAfter: string;
 }
 
 export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedbackButtonWebPartProps> {
@@ -21,7 +23,9 @@ export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedba
     const element: React.ReactElement<IFeedbackButtonProps > = React.createElement(
       FeedbackButton,
       {
-        buttonText: this.properties.buttonText
+        buttonText: this.properties.buttonText,
+        buttonText2: this.properties.buttonText2,
+        calendarAfter: this.properties.calendarAfter
       }
     );
 
@@ -44,7 +48,13 @@ export default class FeedbackButtonWebPart extends BaseClientSideWebPart<IFeedba
               groupName: strings.BasicGroupName,
               groupFields: [
                 PropertyPaneTextField('buttonText', {
-                  label: "Button Text"
+                  label: "Calendar Button (Before Click)"
+                }),
+                PropertyPaneTextField('calendarAfter', {
+                  label: "Calendar Button (After Click)"
+                }),
+                PropertyPaneTextField('buttonText2', {
+                  label: "Second Button Text"
                 })
               ]
             }
